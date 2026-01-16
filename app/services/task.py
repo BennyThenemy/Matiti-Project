@@ -15,6 +15,13 @@ class TaskService:
 
     @classmethod
     def create_and_run_task(cls, background_tasks: BackgroundTasks, func: Callable[..., Awaitable[Any]], *args: Any):
+        """
+        Creates and runs a background task.
+        Args:
+            background_tasks (BackgroundTasks): The FastAPI BackgroundTasks instance.
+            func (Callable[..., Awaitable[Any]]): The async function to run as a background task.
+            *args (Any): Arguments to pass to the function.
+        """
         task_id = str(uuid4())
         cls.tasks[task_id] = "running"
         background_tasks.add_task(cls._run_and_update_status, task_id, func, *args)
@@ -22,9 +29,6 @@ class TaskService:
     
     @classmethod
     async def get_task_status(cls, task_id: str):
-        """
-        Returns the status of a background task.
-        """
         status = cls.tasks.get(task_id)
         if status is None:
             return {"status": "not_found"}
